@@ -1,7 +1,6 @@
 from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.table import StreamTableEnvironment, DataTypes
-
-from table.user_defined_sources_and_sinks.TestRetractSink import TestRetractSink
+from pyflink.table.descriptors import CustomConnectorDescriptor, Schema
 
 
 def in_streaming():
@@ -20,10 +19,13 @@ def in_streaming():
     # result = left.where("a.in(RightTable)")
 
     # use custom retract sink connector
-    sink = TestRetractSink(["a", "b"],
-                           [DataTypes.STRING(),
-                            DataTypes.STRING()])
-    st_env.register_table_sink("sink", sink)
+    custom_connector = CustomConnectorDescriptor('pyflink-test', 1, False)
+    st_env.connect(custom_connector) \
+        .with_schema(
+        Schema()
+            .field("a", DataTypes.STRING())
+            .field("b", DataTypes.STRING())
+    ).register_table_sink("sink")
     result.insert_into("sink")
     st_env.execute("in streaming")
     # (true, ra, raa)

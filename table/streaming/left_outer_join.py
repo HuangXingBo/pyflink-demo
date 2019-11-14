@@ -1,7 +1,6 @@
 from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.table import StreamTableEnvironment, DataTypes
-
-from table.user_defined_sources_and_sinks.TestRetractSink import TestRetractSink
+from pyflink.table.descriptors import CustomConnectorDescriptor, Schema
 
 
 def left_outer_join_streaming():
@@ -16,11 +15,14 @@ def left_outer_join_streaming():
 
     result = left.left_outer_join(right, "a = d").select("a, b, e")
     # use custom retract sink connector
-    sink = TestRetractSink(["a", "b", "c"],
-                           [DataTypes.BIGINT(),
-                            DataTypes.STRING(),
-                            DataTypes.STRING()])
-    st_env.register_table_sink("sink", sink)
+    custom_connector = CustomConnectorDescriptor('pyflink-test', 1, False)
+    st_env.connect(custom_connector) \
+        .with_schema(
+        Schema()
+            .field("a", DataTypes.BIGINT())
+            .field("b", DataTypes.STRING())
+            .field("c", DataTypes.STRING())
+    ).register_table_sink("sink")
     result.insert_into("sink")
     st_env.execute("left outer join streaming")
     # (true, 1, 1a, null)

@@ -2,8 +2,7 @@ import os
 
 from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.table import StreamTableEnvironment, CsvTableSource, DataTypes
-
-from table.user_defined_sources_and_sinks.TestRetractSink import TestRetractSink
+from pyflink.table.descriptors import CustomConnectorDescriptor, Schema
 
 
 def distinct_streaming():
@@ -22,10 +21,13 @@ def distinct_streaming():
     orders = st_env.scan("Orders")
     result = orders.select("a, b").distinct()
     # use custom retract sink connector
-    sink = TestRetractSink(["a", "b"],
-                           [DataTypes.STRING(),
-                            DataTypes.INT()])
-    st_env.register_table_sink("sink", sink)
+    custom_connector = CustomConnectorDescriptor('pyflink-test', 1, False)
+    st_env.connect(custom_connector) \
+        .with_schema(
+        Schema()
+            .field("a", DataTypes.STRING())
+            .field("b", DataTypes.INT())
+    ).register_table_sink("sink")
     result.insert_into("sink")
     st_env.execute("distinct streaming")
     # (true, a, 1)
