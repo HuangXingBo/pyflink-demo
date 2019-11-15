@@ -103,6 +103,15 @@ function send_demo_message {
 	send_messages_to_kafka '{"user_id": "561558", "item_id":"3611281", "category_id": "965809", "behavior": "pv", "ts": "2017-11-26T01:00:00Z"}' $1
 }
 
+function period_send_message {
+    for file in $2/* ; do
+        if [ -f $file ]; then
+            send_message $1 $file
+            sleep 10
+        fi
+    done
+}
+
 function send_messages_to_kafka {
 	echo -e $1 | $KAFKA_DIR/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic $2
 }
@@ -112,6 +121,7 @@ function send_messages_to_kafka {
 # drop_kafka_topic user_behavior
 # create_kafka_topic 1 1 user_behavior
 # send_message user_behavior user_behavior.log
+# period_send_message user_behavior send_dir
 # send_demo_message user_behavior
 # stop_kafka
 
