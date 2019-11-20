@@ -1,5 +1,5 @@
 # UDF
-This page helps users to use udf in pyflink
+This module helps users to create a java udf and use in pyflink.
 
 ## Build UDF
 
@@ -28,7 +28,7 @@ cd aggregate-function; mvn clean package
 
 ### [optional] Run In Local PVM(Python Virtual Machine)
 1. put udf jar(scalar-function-1.0.jar, table-function-1.0.jar, aggregate-function-1.0.jar) in Python site-packages/pyflink/lib directory
-2. use python interpreter to run the code in scalar_func_demo.py or table_func_demo.py or aggregate_func_demo.py
+2. use python interpreter to run the code in [scalar_func_demo.py](https://github.com/HuangXingBo/pyflink-demo/blob/master/table/javaudf/scalar_func_demo.py) or [table_func_demo.py](https://github.com/HuangXingBo/pyflink-demo/blob/master/table/javaudf/table_func_demo.py) or [aggregate_func_demo.py](https://github.com/HuangXingBo/pyflink-demo/blob/master/table/javaudf/aggregate_func_demo.py)
 
 ### [optional] Run Job In Flink Cluster
  

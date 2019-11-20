@@ -5,7 +5,7 @@ from pyflink.table.udf import udf
 from pyflink.table.window import Tumble
 
 
-def category_demo():
+def category_count_demo():
     s_env = StreamExecutionEnvironment.get_execution_environment()
     s_env.set_stream_time_characteristic(TimeCharacteristic.EventTime)
     s_env.set_parallelism(1)
@@ -65,7 +65,6 @@ def category_demo():
         .in_append_mode() \
         .register_table_source("source")
 
-    # use custom retract sink connector
     # create table sales_volume_table(startTime TIMESTAMP,
     # endTime TIMESTAMP,category_id VARCHAR(40), sales_volume BIGINT);
     custom_connector = CustomConnectorDescriptor('jdbc', 1, False) \
@@ -97,8 +96,8 @@ def category_demo():
           .select("w.start as startTime, w.end as endTime, category_id, COUNT(1) as sales_volume") \
           .insert_into("sink")
 
-    st_env.execute("category_demo")
+    st_env.execute("category_count_demo")
 
 
 if __name__ == '__main__':
-    category_demo()
+    category_count_demo()

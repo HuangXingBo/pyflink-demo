@@ -1,5 +1,5 @@
-# pv_uv_demo
-This demo is to help users to use pyflink api to develop a pv/uv demo
+# category_count_demo
+This demo use kafka as source connector, mysql as sink connector and use python udf in logic.
 
 **contents**
 
@@ -12,7 +12,7 @@ This demo is to help users to use pyflink api to develop a pv/uv demo
     + [Install maven](#install-maven)
   + [Build PyFlink](#build-pyflink)
   + [Prepare Kafka](#prepare-kafka)
-  + [Prepare Derby](#prepare-derby)
+  + [Prepare MySQL](#prepare-mysql)
   + [Install Dependency](#install-dependency)
   + [Prepare Data](#prepare-data)
   + [Run Demo](#run-the-demo)
@@ -131,45 +131,28 @@ Then you depress the tar package:
 tar zxvf kafka_2.11-0.11.0.3.tgz
 ```
 
-### Prepare Derby
-the pv_uv_demo need a upsert sink connector and I choose the derby, so you need to install and run Derby in local host. the version we use [db-derby-10.14.2.0-lib](http://apache.mirrors.pair.com//db/derby/db-derby-10.14.2.0/db-derby-10.14.2.0-lib.tar.gz)
-you use the following command to download:
+### Prepare Mysql
+the category_count_demo need a upsert sink connector and I choose the mysql, so you need to install mysql and put corresponding java jar
+into Python directory of site-package/pyflink/lib.
 
+First Install [MySQL](https://dev.mysql.com/downloads/mysql/)
+The version of mysql I choose 8.0.18.The installation progress you can refer to https://dev.mysql.com/doc/mysql-osx-excerpt/5.7/en/osx-installation-pkg.html
+
+Then download mysql-connector java jar
 ```shell
-wget http://apache.mirrors.pair.com//db/derby/db-derby-10.14.2.0/db-derby-10.14.2.0-lib.tar.gz
+wget http://central.maven.org/maven2/mysql/mysql-connector-java/8.0.18/mysql-connector-java-8.0.18.jar
 ```
 
-Then you depress the tar package:
+Then put the jar into the Python directory of site-package/pyflink/lib
 
-```shell
-tar zxvf http://apache.mirrors.pair.com//db/derby/db-derby-10.14.2.0/db-derby-10.14.2.0-lib.tar.gz
+Next, you should create a database flink_test and create a table sales_volume_table
+
+```mysql
+create table sales_volume_table(startTime TIMESTAMP,endTime TIMESTAMP,category_id bigint,sales_volume bigint)
+
 ```
-
-Next, you start Derby Server:
-
-```shell
-./bin/startNetworkServer -h 0.0.0.0
-```
-
-Next, you can run the ij in another terminal:
-
-```shell
-./bin/ij
-```
-
-Next, you can connect to the server in the ij interactive command:
-
-```shell
-ij> connect 'jdbc:derby://localhost:1527/firstdb;create=true';
-```
-
-Next, you need to create the result table pv_uv_table in the ij terminal:
-
-```shell
-ij> create table pv_uv_table(startTime TIMESTAMP,endTime TIMESTAMP,pv bigint,uv bigint);
-```
-
-Finally, you need to put the derby.jar, derbyclient.jar and derbytools.jar in db-derby-10.14.2.0-bin/lib into the Python directory of site-package/pyflink/lib
+NOTE: you should change .property("connector.username", "root") and property("connector.password", "xxtxxthmhxb0643") 
+in category_count_demo.py to your mysql username and password.
 
 ### Install Dependency
 Install environment dependency
@@ -210,23 +193,11 @@ send_message user_behavior user_behavior.log
 ```
 
 ## Run The Demo
-The demo code in pv-uv_example.py, you can directly run the code
+The demo code in category_count_demo.py, you can directly run the code
 
 ### See the result
-you can see the result in the ij terminal:
+you can see the result in the mysql terminal:
 
-```shell
-ij> select * from pv_uv_table;
-STARTTIME                    |ENDTIME                      |PV                  |UV
------------------------------------------------------------------------------------------------------
-2017-11-26 01:00:00.0        |2017-11-26 02:00:00.0        |47244               |30837
-2017-11-26 02:00:00.0        |2017-11-26 03:00:00.0        |53902               |35261
-2017-11-26 03:00:00.0        |2017-11-26 04:00:00.0        |53135               |35302
-2017-11-26 04:00:00.0        |2017-11-26 05:00:00.0        |49863               |33537
-2017-11-26 05:00:00.0        |2017-11-26 06:00:00.0        |54305               |35748
-2017-11-26 06:00:00.0        |2017-11-26 07:00:00.0        |56718               |36934
-2017-11-26 07:00:00.0        |2017-11-26 08:00:00.0        |58324               |37763
-2017-11-26 08:00:00.0        |2017-11-26 09:00:00.0        |58672               |37961
-
-已选择 8 行
+```mysql
+select * from sales_volume_table;
 ```
