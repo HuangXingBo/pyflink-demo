@@ -61,7 +61,7 @@ def custom_kafka_source_demo():
         .in_append_mode() \
         .register_table_source("source")
 
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING()],
@@ -69,7 +69,7 @@ def custom_kafka_source_demo():
 
     st_env.scan("source").window(Tumble.over("2.rows").on("proctime").alias("w")) \
         .group_by("w, a") \
-        .select("a, max(b)").insert_into("result")
+        .select("a, max(b)").insert_into("sink")
 
     st_env.execute("custom kafka source demo")
     # cat /tmp/custom_kafka_source_demo.csv
@@ -92,12 +92,12 @@ def custom_test_source_demo():
             .field("a", DataTypes.STRING())
     ).register_table_source("source")
 
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a"],
                                             [DataTypes.STRING()],
                                             result_file))
     orders = st_env.scan("source")
-    orders.insert_into("result")
+    orders.insert_into("sink")
     st_env.execute("custom test source demo")
     # cat /tmp/custom_test_source_demo.csv
     # haha

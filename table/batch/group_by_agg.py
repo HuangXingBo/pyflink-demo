@@ -19,14 +19,14 @@ def group_by_agg_batch():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT()],
                                             result_file))
     orders = bt_env.scan("Orders")
     result = orders.group_by("a").select("a, b.sum as d")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("group by agg batch")
     # cat /tmp/table_group_by_agg_batch.csv
     # a,13

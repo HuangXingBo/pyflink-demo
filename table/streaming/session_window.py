@@ -61,7 +61,7 @@ def session_time_window_streaming():
         .in_append_mode() \
         .register_table_source("source")
 
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING()],
@@ -69,7 +69,7 @@ def session_time_window_streaming():
 
     st_env.scan("source").window(Session.with_gap("10.minutes").on("rowtime").alias("w")) \
         .group_by("w, a") \
-        .select("a, max(b)").insert_into("result")
+        .select("a, max(b)").insert_into("sink")
 
     st_env.execute("session time window streaming")
     # cat /tmp/session_time_window_streaming.csv

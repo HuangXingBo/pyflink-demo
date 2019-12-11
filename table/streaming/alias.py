@@ -22,7 +22,7 @@ def alias_streaming():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c", "rowtime"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT(),
@@ -31,7 +31,7 @@ def alias_streaming():
                                             result_file))
     orders = st_env.scan("Orders")
     result = orders.alias("x, y, z, t").select("x, y, z, t")
-    result.insert_into("result")
+    result.insert_into("sink")
     st_env.execute("alias streaming")
     # cat /tmp/table_alias_streaming.csv
     # a,1,1,2013-01-01 00:14:13.0

@@ -23,7 +23,7 @@ def add_columns_streaming():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c", "rowtime", "d"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT(),
@@ -33,7 +33,7 @@ def add_columns_streaming():
                                             result_file))
     orders = st_env.scan("Orders")
     result = orders.add_columns("concat(a, '_sunny') as d")
-    result.insert_into("result")
+    result.insert_into("sink")
     st_env.execute("add columns streaming")
     # cat /tmp/table_add_columns_streaming.csv
     # a,1,1,2013-01-01 00:14:13.0,a_sunny

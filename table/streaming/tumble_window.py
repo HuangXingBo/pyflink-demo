@@ -61,7 +61,7 @@ def tumble_time_window_streaming():
         .in_append_mode() \
         .register_table_source("source")
 
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING()],
@@ -69,7 +69,7 @@ def tumble_time_window_streaming():
 
     st_env.scan("source").window(Tumble.over("1.hours").on("rowtime").alias("w")) \
         .group_by("w, a") \
-        .select("a, max(b)").insert_into("result")
+        .select("a, max(b)").insert_into("sink")
 
     st_env.execute("tumble time window streaming")
     # cat /tmp/tumble_time_window_streaming.csv
@@ -137,7 +137,7 @@ def tumble_row_window_streaming():
 
     st_env.scan("source").window(Tumble.over("2.rows").on("proctime").alias("w")) \
         .group_by("w, a") \
-        .select("a, max(b)").insert_into("result")
+        .select("a, max(b)").insert_into("sink")
 
     st_env.execute("tumble row window streaming")
     # cat /tmp/tumble_row_window_streaming.csv
@@ -147,7 +147,7 @@ def tumble_row_window_streaming():
 
 
 if __name__ == '__main__':
-    from table.prepare_environment import prepare_env
-    prepare_env(need_stream_source=True)
+    # from table.prepare_environment import prepare_env
+    # prepare_env(need_stream_source=True)
     # tumble_time_window_streaming()
-    tumble_row_window_streaming()
+    tumble_time_window_streaming()

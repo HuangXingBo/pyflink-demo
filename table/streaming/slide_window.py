@@ -61,7 +61,7 @@ def slide_time_window_streaming():
         .in_append_mode() \
         .register_table_source("source")
 
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING()],
@@ -69,7 +69,7 @@ def slide_time_window_streaming():
 
     st_env.scan("source").window(Slide.over("1.hours").every("10.minutes").on("rowtime").alias("w")) \
         .group_by("w, a") \
-        .select("a, max(b)").insert_into("result")
+        .select("a, max(b)").insert_into("sink")
 
     st_env.execute("slide time window streaming")
     # cat /tmp/slide_time_window_streaming.csv
@@ -142,7 +142,7 @@ def slide_row_window_streaming():
         .in_append_mode() \
         .register_table_source("source")
 
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING()],
@@ -150,7 +150,7 @@ def slide_row_window_streaming():
 
     st_env.scan("source").window(Slide.over("2.rows").every("1.rows").on("proctime").alias("w")) \
         .group_by("w, a") \
-        .select("a, max(b)").insert_into("result")
+        .select("a, max(b)").insert_into("sink")
 
     st_env.execute("slide row window streaming")
     # cat /tmp/slide_row_window_streaming.csv

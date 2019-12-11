@@ -15,7 +15,7 @@ def order_by_batch():
     left = bt_env.from_elements(
         [(1, "ra", "raa"), (2, "lb", "lbb"), (3, "", "lcc"), (2, "lb", "lbb"), (4, "ra", "raa")],
         ["a", "b", "c"]).select("a, b, c")
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.BIGINT(),
                                              DataTypes.STRING(),
@@ -23,7 +23,7 @@ def order_by_batch():
                                             result_file))
 
     result = left.order_by("a.asc")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("order by batch")
 
     # cat /tmp/table_order_by_batch.csv

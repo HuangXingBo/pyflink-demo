@@ -19,7 +19,7 @@ def filter_batch():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c", "rowtime"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT(),
@@ -28,7 +28,7 @@ def filter_batch():
                                             result_file))
     orders = bt_env.scan("Orders")
     result = orders.filter("b % 2 === 0")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("filter batch")
     # cat /tmp/table_filter_batch.csv
     # b,2,2,2013-01-01 00:24:13.0

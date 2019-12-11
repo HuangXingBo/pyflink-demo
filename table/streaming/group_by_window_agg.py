@@ -65,7 +65,7 @@ def group_by_window_agg_streaming():
         .in_append_mode() \
         .register_table_source("source")
 
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING()],
@@ -73,7 +73,7 @@ def group_by_window_agg_streaming():
 
     st_env.scan("source").window(Tumble.over("1.hours").on("rowtime").alias("w")) \
         .group_by("w, a") \
-        .select("a, max(b)").insert_into("result")
+        .select("a, max(b)").insert_into("sink")
 
     st_env.execute("group by window agg streaming")
     # cat /tmp/table_group_by_window_agg_streaming.csv

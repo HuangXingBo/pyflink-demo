@@ -20,7 +20,7 @@ def group_by_window_agg_batch():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "start", "end", "rowtime", "d"],
                                             [DataTypes.STRING(),
                                              DataTypes.TIMESTAMP(),
@@ -32,7 +32,7 @@ def group_by_window_agg_batch():
     result = orders.window(Tumble.over("1.hours").on("rowtime").alias("w")) \
         .group_by("a, w") \
         .select("a, w.start, w.end, w.rowtime, b.sum as d")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("group by agg batch")
     # cat /tmp/table_group_by_window_agg_batch.csv
     # a,2013-01-01 00:00:00.0,2013-01-01 01:00:00.0,2013-01-01 00:59:59.999,4

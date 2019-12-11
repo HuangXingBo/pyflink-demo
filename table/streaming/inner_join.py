@@ -16,7 +16,7 @@ def inner_join_streaming():
         ["a", "b", "c"]).select("a, b, c")
     right = st_env.from_elements([(1, "1b", "1bb"), (2, None, "2bb"), (1, "3b", "3bb"), (4, "4b", "4bb")],
                                  ["d", "e", "f"]).select("d, e, f")
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.BIGINT(),
                                              DataTypes.STRING(),
@@ -24,7 +24,7 @@ def inner_join_streaming():
                                             result_file))
 
     result = left.join(right).where("a = d").select("a, b, e")
-    result.insert_into("result")
+    result.insert_into("sink")
     st_env.execute("inner join streaming")
     # cat /tmp/table_inner_join_streaming.csv
     # 1,1a,1b

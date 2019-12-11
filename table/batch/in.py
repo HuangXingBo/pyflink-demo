@@ -16,7 +16,7 @@ def in_batch():
         ["a", "b", "c"]).select("a, b, c")
     right = bt_env.from_elements([(1, "ra", "raa"), (2, "", "rbb"), (3, "rc", "rcc"), (1, "ra", "raa")],
                                  ["a", "b", "c"]).select("a")
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.BIGINT(),
                                              DataTypes.STRING(),
@@ -24,7 +24,7 @@ def in_batch():
                                             result_file))
 
     result = left.where("a.in(%s)" % right)
-    result.insert_into("result")
+    result.insert_into("sink")
     # another way
     # bt_env.register_table("RightTable", right)
     # result = left.where("a.in(RightTable)")

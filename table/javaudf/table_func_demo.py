@@ -15,7 +15,7 @@ def table_func_python_table_join_lateral_api():
     result_file = "/tmp/table_func_python_table_join_lateral_api.csv"
     if os.path.exists(result_file):
         os.remove(result_file)
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING(),
@@ -26,7 +26,7 @@ def table_func_python_table_join_lateral_api():
 
     result = source_table.join_lateral("Split(a) as (word, length)").select("a, word, length")
 
-    result.insert_into("result")
+    result.insert_into("sink")
 
     bt_env.execute("table func python table join lateral api")
     # cat /tmp/table_func_python_table_join_lateral_api.csv
@@ -52,7 +52,7 @@ def table_func_python_table_left_outer_join_lateral_api():
     result_file = "/tmp/table_func_python_table_left_outer_join_lateral_api.csv"
     if os.path.exists(result_file):
         os.remove(result_file)
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING(),
@@ -63,7 +63,7 @@ def table_func_python_table_left_outer_join_lateral_api():
 
     result = source_table.left_outer_join_lateral("Split(a) as (word, length)").select("a, word, length")
 
-    result.insert_into("result")
+    result.insert_into("sink")
 
     bt_env.execute("table func python table left outer join lateral api")
     # cat /tmp/table_func_python_table_left_outer_join_lateral_api.csv
@@ -89,7 +89,7 @@ def table_func_python_sql_join_lateral_api():
     result_file = "/tmp/table_func_python_sql_join_lateral_api.csv"
     if os.path.exists(result_file):
         os.remove(result_file)
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING(),
@@ -101,7 +101,7 @@ def table_func_python_sql_join_lateral_api():
 
     result = bt_env.sql_query("SELECT a, word, length FROM MyTable, LATERAL TABLE(split(a)) as T(word, length)")
 
-    result.insert_into("result")
+    result.insert_into("sink")
 
     bt_env.execute("table func python sql join lateral api")
     # cat /tmp/table_func_python_sql_join_lateral_api.csv
@@ -127,7 +127,7 @@ def table_func_python_sql_left_outer_join_lateral_api():
     result_file = "/tmp/table_func_python_sql_left_outer_join_lateral_api.csv"
     if os.path.exists(result_file):
         os.remove(result_file)
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING(),
@@ -140,7 +140,7 @@ def table_func_python_sql_left_outer_join_lateral_api():
     result = bt_env.sql_query(
         "SELECT a, word, length FROM MyTable LEFT JOIN LATERAL TABLE(split(a)) as T(word, length) ON TRUE")
 
-    result.insert_into("result")
+    result.insert_into("sink")
 
     bt_env.execute("table func python sql left outer join lateral api")
     # cat /tmp/table_func_python_sql_left_outer_join_lateral_api.csv

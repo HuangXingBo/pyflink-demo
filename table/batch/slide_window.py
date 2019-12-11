@@ -20,14 +20,14 @@ def slide_time_window_batch():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a"],
                                             [DataTypes.INT()],
                                             result_file))
     orders = bt_env.scan("Orders")
     result = orders.window(Slide.over("60.minutes").every("10.minutes").on("rowtime").alias("w")) \
         .group_by("w").select("b.sum")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("slide time window batch")
     # cat /tmp/table_slide_time_window_batch.csv
     # 1

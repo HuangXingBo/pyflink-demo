@@ -19,7 +19,7 @@ def scan_streaming():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c", "rowtime"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT(),
@@ -27,7 +27,7 @@ def scan_streaming():
                                              DataTypes.TIMESTAMP()],
                                             result_file))
     orders = st_env.scan("Orders")
-    orders.insert_into("result")
+    orders.insert_into("sink")
     st_env.execute("scan streaming")
     # cat /tmp/table_scan_streaming.csv
     # a,1,1,2013-01-01 00:14:13.0

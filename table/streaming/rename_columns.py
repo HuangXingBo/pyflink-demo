@@ -19,14 +19,14 @@ def rename_columns_streaming():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT()],
                                             result_file))
     orders = st_env.scan("Orders")
     result = orders.rename_columns("a as a2, b as b2").select("a2, b2")
-    result.insert_into("result")
+    result.insert_into("sink")
     st_env.execute("rename columns streaming")
     # cat /tmp/table_rename_columns_streaming.csv
     # a,1

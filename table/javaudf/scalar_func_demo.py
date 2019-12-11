@@ -14,7 +14,7 @@ def scalar_func_python_table_api():
     result_file = "/tmp/scalar_func_python_table_api.csv"
     if os.path.exists(result_file):
         os.remove(result_file)
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT(),
@@ -26,7 +26,7 @@ def scalar_func_python_table_api():
 
     # use the java scalar function in Python Table API
     result = source_table.select("a, a.hashCode(), hashCode(a)")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("scalar func python table api")
     # cat /tmp/scalar_func_python_table_api.csv
     # a,1164,1164
@@ -44,7 +44,7 @@ def scalar_func_python_sql():
     result_file = "/tmp/scalar_func_python_sql.csv"
     if os.path.exists(result_file):
         os.remove(result_file)
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT()],
@@ -57,7 +57,7 @@ def scalar_func_python_sql():
     bt_env.register_table("MyTable", source_table)
 
     result = bt_env.sql_query("SELECT a, hashCode(a) FROM MyTable")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("scalar func python sql")
     # cat /tmp/scalar_func_python_sql.csv
     # a,1164

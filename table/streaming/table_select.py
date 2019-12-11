@@ -20,14 +20,14 @@ def select_streaming():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "c"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT()],
                                             result_file))
     orders = st_env.scan("Orders")
     result = orders.select("a, b")
-    result.insert_into("result")
+    result.insert_into("sink")
     st_env.execute("select streaming")
 
     # cat /tmp/table_select_streaming.csv

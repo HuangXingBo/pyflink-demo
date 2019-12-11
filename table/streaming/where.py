@@ -19,7 +19,7 @@ def where_streaming():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c", "rowtime"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT(),
@@ -28,7 +28,7 @@ def where_streaming():
                                             result_file))
     orders = st_env.scan("Orders")
     result = orders.where("a === 'b'")
-    result.insert_into("result")
+    result.insert_into("sink")
     st_env.execute("where streaming")
     # cat /tmp/table_where_streaming.csv
     # b,2,2,2013-01-01 00:24:13.0

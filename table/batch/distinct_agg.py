@@ -20,14 +20,14 @@ def distinct_agg_batch():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["b"],
                                             [DataTypes.INT()],
                                             result_file))
     orders = bt_env.scan("Orders")
     result = orders.group_by("a") \
         .select("b.sum.distinct as d")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("distinct agg batch")
     # cat table/result/table_distinct_batch.csv
     # 13

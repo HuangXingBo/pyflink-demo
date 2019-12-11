@@ -19,7 +19,7 @@ def add_or_replace_columns_batch():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c", "rowtime"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT(),
@@ -28,7 +28,7 @@ def add_or_replace_columns_batch():
                                             result_file))
     orders = bt_env.scan("Orders")
     result = orders.add_or_replace_columns("concat(a, '_sunny') as a")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("add or replace columns batch")
     # cat /tmp/table_add_or_replace_columns_batch.csv
     # a_sunny,1,1,2013-01-01 00:14:13.0

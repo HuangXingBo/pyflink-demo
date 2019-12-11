@@ -20,7 +20,7 @@ def scan_batch():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c", "rowtime"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT(),
@@ -28,7 +28,7 @@ def scan_batch():
                                              DataTypes.TIMESTAMP()],
                                             result_file))
     orders = bt_env.scan("Orders")
-    orders.insert_into("result")
+    orders.insert_into("sink")
     bt_env.execute("scan batch")
     # cat /tmp/table_scan_batch.csv
     # a,1,1,2013-01-01 00:14:13.0

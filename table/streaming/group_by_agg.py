@@ -45,7 +45,7 @@ def group_by_agg_streaming():
            .derive_schema()
         ) \
         .in_upsert_mode() \
-        .register_table_sink("result")
+        .register_table_sink("sink")
 
     orders = st_env.scan("Orders")
     groub_by_table = orders.group_by("a").select("a, b.sum as d")
@@ -55,7 +55,7 @@ def group_by_agg_streaming():
     # so we need to cast the type in our demo.
     st_env.register_table("group_table", groub_by_table)
     result = st_env.sql_query("SELECT a, CAST(d AS VARCHAR) from group_table")
-    result.insert_into("result")
+    result.insert_into("sink")
     st_env.execute("group by agg streaming")
     # curl -X GET 'http://localhost:9200/group_by_agg_streaming/_search'
     # {

@@ -19,14 +19,14 @@ def rename_columns_batch():
                                                  DataTypes.INT(),
                                                  DataTypes.INT(),
                                                  DataTypes.TIMESTAMP()]))
-    bt_env.register_table_sink("result",
+    bt_env.register_table_sink("sink",
                                CsvTableSink(["a", "b"],
                                             [DataTypes.STRING(),
                                              DataTypes.INT()],
                                             result_file))
     orders = bt_env.scan("Orders")
     result = orders.rename_columns("a as a2, b as b2").select("a2, b2")
-    result.insert_into("result")
+    result.insert_into("sink")
     bt_env.execute("rename columns batch")
     # cat /tmp/table_rename_columns_batch.csv
     # a,1

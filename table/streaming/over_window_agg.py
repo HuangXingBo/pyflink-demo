@@ -61,7 +61,7 @@ def over_window_agg_streaming():
         .in_append_mode() \
         .register_table_source("source")
 
-    st_env.register_table_sink("result",
+    st_env.register_table_sink("sink",
                                CsvTableSink(["a", "b", "c"],
                                             [DataTypes.STRING(),
                                              DataTypes.STRING(),
@@ -70,7 +70,7 @@ def over_window_agg_streaming():
 
     st_env.scan("source").over_window(Over.partition_by("a")
                                       .order_by("rowtime").preceding("30.minutes").alias("w")) \
-        .select("a, max(b) over w, min(c) over w").insert_into("result")
+        .select("a, max(b) over w, min(c) over w").insert_into("sink")
 
     st_env.execute("over window agg streaming")
     # cat /tmp/table_over_window_agg_streaming.csv
@@ -83,7 +83,7 @@ def over_window_agg_streaming():
     # if preceding("unbounded_ranges") e.g:
     # st_env.scan("source").over_window(Over.partition_by("a")
     #                                       .order_by("rowtime").preceding("unbounded_range").alias("w")) \
-    #         .select("a, max(b) over w, min(c) over w").insert_into("result")
+    #         .select("a, max(b) over w, min(c) over w").insert_into("sink")
     # the result is
     # a,1,1
     # a,3,1

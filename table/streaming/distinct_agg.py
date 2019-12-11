@@ -83,11 +83,11 @@ def distinct_agg_streaming():
            .derive_schema()
         ) \
         .in_upsert_mode() \
-        .register_table_sink("result")
+        .register_table_sink("sink")
     orders = st_env.scan("Orders")
     result = orders.window(Tumble.over("30.minutes").on("rowtime").alias("w")) \
         .group_by("a, w").select("a, b.max.distinct as d")
-    result.insert_into("result")
+    result.insert_into("sink")
     st_env.execute("distinct agg streaming")
     # curl -X GET 'http://localhost:9200/distinct_agg_streaming/_search'
     # {
